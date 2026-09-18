@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Investor360 — a digital investment planning and asset allocation guide for retail investors in India.">
+<title>Investor360 | Investment Planning</title>
+<style>
+:root{
+  --navy:#071b33;--navy2:#0c2a4d;--blue:#1769e0;--blue2:#2d8cff;--ink:#10243e;
+  --muted:#63758b;--bg:#f4f7fb;--card:#fff;--line:#dfe7f0;--green:#0b8f65;--amber:#c77b00;
+  --shadow:0 18px 45px rgba(9,36,68,.10);--radius:20px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{background:var(--navy);color:#fff;padding:10px 5%;font-size:12px;display:flex;justify-content:space-between;gap:20px}
+.header{background:linear-gradient(135deg,var(--navy),#103e69);color:white;padding:22px 5%;position:sticky;top:0;z-index:20;box-shadow:0 5px 22px #061a2d33}
+.nav{max-width:1280px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#58b4ff,#1264d7);display:grid;place-items:center;font-weight:900;font-size:18px}
+.brand strong{font-size:18px;letter-spacing:.2px}.brand span{display:block;color:#b8cee4;font-size:11px;margin-top:2px}
+.navlinks{display:flex;gap:22px;font-size:13px}.navlinks a{color:#d8e8f7;text-decoration:none}.navlinks a:hover{color:white}
+.hero{max-width:1280px;margin:0 auto;padding:55px 5% 35px;display:grid;grid-template-columns:1.15fr .85fr;gap:35px;align-items:center}
+.eyebrow{color:var(--blue);font-weight:800;font-size:12px;letter-spacing:1.2px;text-transform:uppercase}
+h1{font-size:clamp(34px,5vw,58px);line-height:1.03;margin:10px 0 18px;letter-spacing:-2px}
+.hero p{color:var(--muted);font-size:17px;line-height:1.65;max-width:700px}
+.hero-card{background:linear-gradient(145deg,#0c2a4d,#12588e);border-radius:28px;color:white;padding:30px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero-card:after{content:"";position:absolute;width:230px;height:230px;border-radius:50%;background:#ffffff12;right:-70px;top:-80px}
+.hero-stat{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}.hero-stat div{background:#ffffff10;border:1px solid #ffffff1c;border-radius:15px;padding:15px}.hero-stat b{font-size:22px;display:block}.hero-stat small{color:#bdd4e8}
+.container{max-width:1280px;margin:auto;padding:10px 5% 70px}
+.progress-wrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-bottom:18px}
+.progress-head{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:9px}.progress{height:7px;background:#e9eff5;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:25%;background:linear-gradient(90deg,var(--blue),#57a8ff);border-radius:99px;transition:.4s}
+.grid{display:grid;grid-template-columns:1fr 1.1fr;gap:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 25px rgba(13,41,70,.05)}
+.form-card{padding:28px}.result-card{padding:28px;position:sticky;top:96px;height:max-content}
+.step{display:none}.step.active{display:block;animation:fade .35s ease}@keyframes fade{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:none}}
+.step h2{margin:0 0 7px;font-size:25px}.sub{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 23px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{border:1.5px solid var(--line);border-radius:16px;padding:16px;text-align:left;background:#fff;transition:.2s;min-height:90px}
+.option:hover{border-color:#9fc4ee;transform:translateY(-1px)}.option.selected{border-color:var(--blue);background:#f1f7ff;box-shadow:0 0 0 3px #1769e012}
+.option b{display:block;font-size:14px;margin-bottom:6px}.option span{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.field{margin:18px 0}.field label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:9px}.value{color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+select,input[type=number]{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink);outline:none}
+.buttons{display:flex;justify-content:space-between;gap:10px;margin-top:28px}.btn{border:0;border-radius:12px;padding:12px 19px;font-weight:800}.primary{background:var(--blue);color:white}.primary:hover{background:#0d59c7}.secondary{background:#edf3f9;color:var(--ink)}
+.result-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.result-top h2{margin:0;font-size:25px}.badge{background:#e8f7f2;color:var(--green);padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.chart{height:245px;display:grid;place-items:center;margin:10px 0 0;position:relative}
+canvas{max-width:230px;max-height:230px}.chart-center{position:absolute;text-align:center;pointer-events:none}.chart-center b{display:block;font-size:27px}.chart-center span{font-size:11px;color:var(--muted)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.dot{width:10px;height:10px;border-radius:50%}
+.alloc-list{margin-top:20px;border-top:1px solid var(--line)}.alloc-row{padding:12px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 65px;gap:12px;align-items:center}.alloc-name{font-size:13px;font-weight:700}.bar{height:6px;background:#edf1f5;border-radius:99px;margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue);border-radius:99px}.pct{text-align:right;font-weight:900}
+.insight{margin-top:18px;background:#f4f8fc;border-radius:15px;padding:15px;font-size:12px;line-height:1.6;color:#4f647a}
+.section{margin-top:45px}.section h2{font-size:27px;margin-bottom:8px}.section>p{color:var(--muted);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}.tile{padding:20px;background:white;border:1px solid var(--line);border-radius:17px}.tile b{font-size:14px}.tile p{color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:0}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:18px}.timebox{background:#fff;border:1px solid var(--line);padding:15px;border-radius:14px}.timebox b{display:block;font-size:12px}.timebox span{font-size:22px;font-weight:900;color:var(--blue)}
+.disclaimer{margin-top:40px;background:#fff8e9;border:1px solid #f0ddb1;color:#76591d;padding:18px;border-radius:15px;font-size:12px;line-height:1.65}
+.footer{background:var(--navy);color:#b9cadb;padding:28px 5%;font-size:11px}.footer-inner{max-width:1280px;margin:auto;display:flex;justify-content:space-between;gap:20px}
+@media(max-width:900px){.hero,.grid{grid-template-columns:1fr}.result-card{position:static}.tiles{grid-template-columns:1fr 1fr}.timeline{grid-template-columns:1fr 1fr}.hero-card{display:none}}
+@media(max-width:600px){.navlinks{display:none}.topbar{font-size:10px}.hero{padding-top:35px}.options{grid-template-columns:1fr}.tiles{grid-template-columns:1fr}.form-card,.result-card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="topbar"><span>Investor360 • Digital Investment Planning</span><span>For educational & planning purposes</span></div>
+<header class="header">
+  <div class="nav">
+    <div class="brand"><div class="logo">I</div><div><strong>Investor360</strong><span>Smart allocation. Clear decisions.</span></div></div>
+    <div class="navlinks"><a href="#planner">Planner</a><a href="#assets">Asset classes</a><a href="#journey">Investment journey</a></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">Personalised investment planning</div>
+    <h1>Build a portfolio around your goals — not the market noise.</h1>
+    <p>Answer a few questions about your time horizon, risk comfort and investment goal. Investor360 converts your inputs into an illustrative asset-allocation plan and a simple investment journey.</p>
+  </div>
+  <div class="hero-card">
+    <div class="eyebrow" style="color:#8dccff">Portfolio intelligence</div>
+    <h2 style="font-size:27px;margin:8px 0">Risk × Time × Goal</h2>
+    <p style="color:#c5d9eb;font-size:13px;line-height:1.6">The allocation engine balances growth assets with stability and diversification. Longer horizons can support greater volatility tolerance; short-term needs prioritise liquidity and capital stability.</p>
+    <div class="hero-stat"><div><b>6</b><small>asset categories</small></div><div><b>5</b><small>risk profiles</small></div></div>
+  </div>
+</section>
+
+<main class="container" id="planner">
+  <div class="progress-wrap">
+    <div class="progress-head"><span id="progressText">Step 1 of 4</span><span id="progressPct">25%</span></div>
+    <div class="progress"><i id="progressBar"></i></div>
+  </div>
+
+  <div class="grid">
+    <section class="card form-card">
+      <div class="step active" data-step="1">
+        <h2>What are you investing for?</h2><p class="sub">Your goal helps determine how much volatility may be appropriate.</p>
+        <div class="options">
+          <button class="option" data-key="goal" data-value="wealth"><b>Wealth creation</b><span>Long-term capital growth and wealth accumulation.</span></button>
+          <button class="option" data-key="retirement" data-value="retirement"><b>Retirement</b><span>Build a portfolio for a future income need.</span></button>
+          <button class="option" data-key="education" data-value="education"><b>Education / major goal</b><span>Target a known future expense.</span></button>
+          <button class="option" data-key="home" data-value="home"><b>Home / large purchase</b><span>Plan for a significant medium-term expenditure.</span></button>
+        </div>
+        <div class="buttons"><span></span><button class="btn primary" onclick="next()">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="2">
+        <h2>What is your investment horizon?</h2><p class="sub">Think about when you expect to need most of this money.</p>
+        <div class="options">
+          <button class="option" data-key="horizon" data-value="short"><b>Under 3 years</b><span>Capital stability and liquidity are important.</span></button>
+          <button class="option" data-key="horizon" data-value="medium"><b>3–7 years</b><span>A balance between growth and stability.</span></button>
+          <button class="option" data-key="horizon" data-value="long"><b>7–12 years</b><span>More time to absorb market cycles.</span></button>
+          <button class="option" data-key="horizon" data-value="verylong"><b>12+ years</b><span>Long-term growth can play a larger role.</span></button>
+        </div>
+        <div class="buttons"><button class="btn secondary" onclick="prev()">← Back</button><button class="btn primary" onclick="next()">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="3">
+        <h2>How do you react to market declines?</h2><p class="sub">This is about behaviour, not just your desired return.</p>
+        <div class="options">
+          <button class="option" data-key="risk" data-value="1"><b>Very cautious</b><span>I would prioritise stability even if returns are lower.</span></button>
+          <button class="option" data-key="risk" data-value="2"><b>Cautious</b><span>I can accept modest fluctuations for some growth.</span></button>
+          <button class="option" data-key="risk" data-value="3"><b>Balanced</b><span>I can tolerate normal market volatility.</span></button>
+          <button class="option" data-key="risk" data-value="4"><b>Growth oriented</b><span>I can accept significant fluctuations for higher growth potential.</span></button>
+          <button class="option" data-key="risk" data-value="5"><b>High growth</b><span>I can tolerate substantial volatility and temporary losses.</span></button>
+        </div>
+        <div class="buttons"><button class="btn secondary" onclick="prev()">← Back</button><button class="btn primary" onclick="next()">Continue →</button></div>
+      </div>
+
+      <div class="step" data-step="4">
+        <h2>Set your investment context</h2><p class="sub">These inputs make the illustration more relevant to your situation.</p>
+        <div class="field"><label>Monthly investment <span class="value" id="sipVal">₹25,000</span></label><input id="sip" type="range" min="5000" max="200000" step="5000" value="25000"></div>
+        <div class="field"><label>Existing investible corpus <span class="value" id="corpusVal">₹5 lakh</span></label><input id="corpus" type="range" min="0" max="10000000" step="100000" value="500000"></div>
+        <div class="field"><label>Emergency fund</label><select id="emergency"><option value="3">Less than 3 months</option><option value="6" selected>3–6 months</option><option value="9">6–12 months</option><option value="12">More than 12 months</option></select></div>
+        <div class="field"><label>Preferred approach</label><select id="approach"><option value="sip" selected>Monthly SIP / systematic investing</option><option value="lumpsum">Lump sum + periodic rebalancing</option><option value="hybrid">Hybrid</option></select></div>
+        <div class="buttons"><button class="btn secondary" onclick="prev()">← Back</button><button class="btn primary" onclick="buildPlan()">Generate my plan →</button></div>
+      </div>
+    </section>
+
+    <aside class="card result-card" id="result">
+      <div class="result-top"><div><div class="eyebrow">Illustrative plan</div><h2>Your allocation</h2></div><div class="badge" id="profileBadge">Balanced</div></div>
+      <div class="chart"><canvas id="pie" width="230" height="230"></canvas><div class="chart-center"><b id="riskScore">3.0</b><span>risk index / 5</span></div></div>
+      <div class="legend" id="legend"></div>
+      <div class="alloc-list" id="allocList"></div>
+      <div class="insight" id="insight">Complete the questionnaire to see your illustrative allocation.</div>
+    </aside>
+  </div>
+
+  <section class="section" id="assets">
+    <h2>Understand the building blocks</h2>
+    <p>Each asset class can play a different role. The right mix depends on goals, horizon, risk capacity, liquidity and suitability.</p>
+    <div class="tiles">
+      <div class="tile"><b>Equity</b><p>Growth-oriented asset class with higher market volatility. Typically more relevant to longer horizons.</p></div>
+      <div class="tile"><b>Fixed income / FD</b><p>Can provide stability, predictable interest or income characteristics, subject to product terms and issuer risk.</p></div>
+      <div class="tile"><b>Gold</b><p>Diversification asset whose price can fluctuate and may behave differently from equities.</p></div>
+      <div class="tile"><b>REITs / InvITs</b><p>Listed real-asset exposure with market-linked prices and distributions; risks include interest rates and property/business conditions.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="journey">
+    <h2>Illustrative investment journey</h2>
+    <p>Allocation can evolve as the goal approaches. This glide-path view is a planning concept, not a promise of future returns.</p>
+    <div class="timeline" id="timeline">
+      <div class="timebox"><b>Today</b><span>—</span><small>Start</small></div>
+      <div class="timebox"><b>Midway</b><span>—</span><small>Review</small></div>
+      <div class="timebox"><b>Goal − 3y</b><span>—</span><small>De-risk</small></div>
+      <div class="timebox"><b>Goal − 1y</b><span>—</span><small>Protect liquidity</small></div>
+      <div class="timebox"><b>Goal</b><span>—</span><small>Use / reinvest</small></div>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <b>Important:</b> This tool provides an illustrative asset-allocation framework for educational and financial-planning purposes. It is not investment advice, a recommendation to buy or sell any security, a guarantee of returns, or a substitute for a suitability assessment by a qualified investment professional. Market-linked investments can lose value. Product eligibility, taxation, costs, liquidity, credit risk and regulatory requirements should be evaluated before investing. A bank deploying this interface should replace the illustrative rules with its approved suitability, product-governance, disclosures and compliance workflow.
+  </div>
+</main>
+
+<footer class="footer"><div class="footer-inner"><span>Investor360 • Concept interface</span><span>Designed as a bank-grade front-end prototype • No customer data is transmitted</span></div></footer>
+
+<script>
+const state={step:1,goal:null,horizon:null,risk:3};
+const assets=["Equity","Fixed Income / FD","Gold","REITs / InvITs","International","Cash / Liquid"];
+const labels=["Equity","Fixed Income / FD","Gold","REITs / InvITs","International","Cash / Liquid"];
+const dots=["#1769e0","#0b8f65","#d19a18","#8b5cf6","#e25b3f","#7890a8"];
+const profiles=["Very Conservative","Conservative","Balanced","Growth","High Growth"];
+const $=id=>document.getElementById(id);
+
+document.querySelectorAll(".option").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const key=btn.dataset.key;
+    document.querySelectorAll(`.option[data-key="${key}"]`).forEach(x=>x.classList.remove("selected"));
+    btn.classList.add("selected");
+    state[key]=btn.dataset.value;
+    if(key==="risk") state.risk=Number(btn.dataset.value);
+  });
+});
+$("sip").addEventListener("input",e=>$("sipVal").textContent=rupee(e.target.value));
+$("corpus").addEventListener("input",e=>$("corpusVal").textContent=money(e.target.value));
+
+function rupee(v){return "₹"+Number(v).toLocaleString("en-IN")}
+function money(v){v=Number(v);return v>=10000000?"₹"+(v/10000000).toFixed(1)+" Cr":v>=100000?"₹"+(v/100000).toFixed(1)+" lakh":rupee(v)}
+function next(){
+  if(state.step===1&&!state.goal){alert("Please select an investment goal.");return}
+  if(state.step===2&&!state.horizon){alert("Please select your investment horizon.");return}
+  if(state.step===3&&!state.risk){alert("Please select your risk comfort.");return}
+  if(state.step<4){state.step++;renderStep()}
+}
+function prev(){if(state.step>1){state.step--;renderStep()}}
+function renderStep(){
+  document.querySelectorAll(".step").forEach(s=>s.classList.toggle("active",Number(s.dataset.step)===state.step));
+  const pct=state.step*25;$("progressBar").style.width=pct+"%";$("progressText").textContent=`Step ${state.step} of 4`;$("progressPct").textContent=pct+"%";
+}
+function calcAllocation(){
+  let eq={1:15,2:30,3:50,4:65,5:80}[state.risk];
+  const h={short:-18,medium:-7,long:4,verylong:10}[state.horizon||"medium"]; eq+=h;
+  if(state.goal==="home"||state.goal==="education") eq-=7;
+  if(state.goal==="retirement"&&state.horizon==="long") eq+=2;
+  eq=Math.max(5,Math.min(85,eq));
+  let cash=state.horizon==="short"?18:state.horizon==="medium"?10:6;
+  let gold=8, reit=5, intl=Math.max(3,Math.round(eq*.10));
+  let fixed=100-eq-cash-gold-reit-intl;
+  if(fixed<10){cash+=fixed;fixed=0}
+  return [eq,fixed,gold,reit,intl,cash].map(Math.round);
+}
+function buildPlan(){
+  const a=calcAllocation(); const total=a.reduce((x,y)=>x+y,0);
+  const alloc=a.map(x=>Math.round(x*100/total));
+  const profile=profiles[state.risk-1]||"Balanced";
+  $("profileBadge").textContent=profile;$("riskScore").textContent=state.risk.toFixed(1);
+  $("legend").innerHTML=alloc.map((v,i)=>`<div class="legend-item"><i class="dot" style="background:${dots[i]}"></i>${labels[i]} ${v}%</div>`).join("");
+  $("allocList").innerHTML=alloc.map((v,i)=>`<div class="alloc-row"><div><div class="alloc-name">${labels[i]}</div><div class="bar"><i style="width:${v}%;background:${dots[i]}"></i></div></div><div class="pct">${v}%</div></div>`).join("");
+  const htxt={short:"under 3 years",medium:"3–7 years",long:"7–12 years",verylong:"12+ years"}[state.horizon];
+  $("insight").innerHTML=`<b>Planning insight:</b> Your ${profile.toLowerCase()} profile and ${htxt||"selected"} horizon produce this illustrative mix. Review the portfolio periodically and consider reducing market-linked exposure as a known goal approaches.`;
+  drawPie(alloc);
+  updateTimeline(alloc);
+  state.step=4;renderStep();
+  $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function drawPie(values){
+  const c=$("pie"),ctx=c.getContext("2d"),cx=115,cy=115,r=100;ctx.clearRect(0,0,230,230);
+  let start=-Math.PI/2;
+  values.forEach((v,i)=>{const ang=2*Math.PI*v/100;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+ang);ctx.closePath();ctx.fillStyle=dots[i];ctx.fill();start+=ang});
+  ctx.beginPath();ctx.arc(cx,cy,59,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();
+}
+function updateTimeline(base){
+  const eq=base[0];
+  const values=[eq,Math.max(5,eq-8),Math.max(5,eq-15),Math.max(3,eq-25),Math.max(2,eq-32)];
+  document.querySelectorAll(".timebox span").forEach((x,i)=>x.textContent=values[i]+"% equity");
+}
+drawPie([50,25,8,5,7,5]);
+</script>
+</body>
+</html>

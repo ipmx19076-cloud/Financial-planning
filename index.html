@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="InvestPlan — goal-based investment planning for Indian retail investors">
+<title>InvestPlan | Goal-based Investment Planning</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#102a43;--navy2:#173f5f;--ink:#172b4d;--muted:#66788a;--bg:#f5f8fb;
+  --card:#fff;--line:#dbe4ec;--accent:#0f766e;--accent2:#14b8a6;--gold:#b7791f;
+  --danger:#b42318;--shadow:0 12px 34px rgba(16,42,67,.09);--radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,input,select{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid rgba(20,184,166,.45);outline-offset:2px}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{max-width:1240px;margin:auto;padding:13px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;color:var(--navy);letter-spacing:-.4px}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
+.navlinks{display:flex;gap:7px;flex-wrap:wrap}
+.navlinks button{border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:9px}
+.navlinks button:hover{background:#eef5f6;color:var(--ink)}
+.container{max-width:1240px;margin:auto;padding:0 22px}
+.hero{padding:55px 0 35px;background:linear-gradient(135deg,#eef6f8,#fff 55%,#f4f8fc)}
+.hero-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:28px;align-items:center}
+.eyebrow{color:var(--accent);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:1.5px}
+h1{font-size:clamp(34px,5vw,62px);line-height:1.04;letter-spacing:-2.5px;margin:10px 0 18px;color:var(--navy)}
+h2{font-size:28px;letter-spacing:-.7px;margin:0 0 8px}
+h3{margin:0 0 6px}
+.lead{font-size:18px;color:var(--muted);max-width:720px}
+.hero-card,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.hero-card{padding:24px}
+.hero-stat{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line)}
+.hero-stat:last-child{border-bottom:0}
+.small{font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:750;transition:.2s transform,.2s box-shadow,.2s background}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 8px 20px rgba(16,42,67,.18)}
+.btn-secondary{background:#edf6f5;color:#0f5f59}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-danger{background:#fff4f2;color:var(--danger)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.progress-wrap{padding:20px 0 5px}
+.progress-top{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}
+.progress{height:7px;background:#e8eef3;border-radius:99px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--navy),var(--accent2));width:0;transition:.35s}
+.step{display:none;padding:38px 0}
+.step.active{display:block;animation:fade .28s ease}
+@keyframes fade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:18px}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{padding:22px}
+.section-head{margin-bottom:20px}
+.section-head p{margin:0;color:var(--muted)}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}
+input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 13px;background:#fff;color:var(--ink)}
+input[type=range]{padding:0;accent-color:var(--accent)}
+.field{margin-bottom:15px}
+.input-help{font-size:11px;color:var(--muted);margin-top:5px}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.choice{border:1px solid var(--line);background:#fff;border-radius:13px;padding:15px;text-align:left;min-height:90px}
+.choice strong{display:block}
+.choice span{font-size:12px;color:var(--muted)}
+.choice.selected{border-color:var(--accent);background:#eefaf8;box-shadow:inset 0 0 0 1px var(--accent)}
+.nav-actions{display:flex;justify-content:space-between;gap:10px;margin-top:25px}
+.kpi{font-size:29px;font-weight:850;letter-spacing:-1px}
+.kpi-label{font-size:12px;color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:99px;font-size:11px;font-weight:800;background:#edf6f5;color:#0f5f59}
+.badge.warn{background:#fff7e8;color:#9a6700}
+.badge.risk{background:#fff1f0;color:#a02a22}
+.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.chart-box{position:relative;height:320px}
+.alloc-list{display:grid;gap:9px}
+.alloc-row{display:grid;grid-template-columns:145px 1fr 55px;align-items:center;gap:10px;font-size:13px}
+.bar{height:10px;background:#edf1f4;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--navy2),var(--accent2))}
+.risk-meter{height:13px;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#14b8a6,#f59e0b,#ef4444);position:relative}
+.risk-pin{position:absolute;top:-5px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--navy);transform:translateX(-50%)}
+.factor{padding:12px 0;border-bottom:1px solid var(--line)}
+.factor:last-child{border-bottom:0}
+.factor-line{display:flex;justify-content:space-between;font-size:13px}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:left}
+.table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.sim-controls{display:grid;gap:13px}
+.slider-row{display:grid;grid-template-columns:130px 1fr 52px;gap:12px;align-items:center}
+.slider-row input{margin:0}
+.notice{border-left:4px solid var(--accent);background:#edf8f6;padding:13px 15px;border-radius:9px;color:#285e59;font-size:13px}
+.warning{border-left-color:#e3a008;background:#fff9e9;color:#755600}
+.disclaimer{font-size:11px;color:#66788a;background:#eef2f5;padding:16px;border-radius:12px;margin:25px 0}
+.footer{padding:28px 0 55px;color:var(--muted);font-size:12px}
+.hidden{display:none!important}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{padding:16px;background:#f8fafc;border:1px solid var(--line);border-radius:13px}
+.pill-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.pill-tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 13px;font-size:12px}
+.pill-tabs button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.explorer{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.asset-card{padding:16px;border:1px solid var(--line);border-radius:13px;background:#fff}
+.asset-card p{font-size:12px;color:var(--muted);margin:8px 0}
+.health{display:flex;align-items:center;gap:20px}
+.health-ring{width:90px;height:90px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--score),#e8eef3 0);position:relative}
+.health-ring:after{content:"";position:absolute;inset:10px;background:#fff;border-radius:50%}
+.health-ring b{position:relative;z-index:1}
+.scenario-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.scenario{padding:13px;border:1px solid var(--line);border-radius:12px}
+.scenario .impact{font-size:20px;font-weight:800}
+footer a{color:inherit}
+@media(max-width:900px){
+ .hero-grid,.dashboard{grid-template-columns:1fr}.grid-3,.explorer,.scenario-grid{grid-template-columns:repeat(2,1fr)}
+ .metric-grid{grid-template-columns:repeat(2,1fr)}
+ .navlinks{display:none}
+}
+@media(max-width:620px){
+ .container{padding:0 14px}.hero{padding-top:35px}.grid-2,.grid-3,.explorer,.scenario-grid{grid-template-columns:1fr}
+ .metric-grid{grid-template-columns:1fr 1fr}.alloc-row{grid-template-columns:105px 1fr 45px;font-size:12px}
+ .nav{padding:11px 14px}.chart-box{height:270px}.slider-row{grid-template-columns:105px 1fr 45px}
+}
+@media print{
+ .topbar,.hero,.progress-wrap,.nav-actions,.disclaimer,.footer,.actions{display:none!important}
+ .step{display:block!important;padding:15px 0}.card{box-shadow:none;break-inside:avoid}
+ body{background:#fff}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav" aria-label="Primary navigation">
+    <div class="brand"><div class="brand-mark">IP</div><span>InvestPlan</span></div>
+    <div class="navlinks">
+      <button onclick="goTo(0)">Profile</button><button onclick="goTo(6)">Allocation</button>
+      <button onclick="goTo(7)">Projection</button><button onclick="goTo(8)">Simulator</button>
+      <button onclick="goTo(9)">Insights</button>
+    </div>
+    <button class="btn btn-ghost" onclick="window.print()">Print plan</button>
+  </nav>
+</header>
+
+<section class="hero">
+<div class="container hero-grid">
+  <div>
+    <div class="eyebrow">Goal-based investment planning</div>
+    <h1>Build an investment plan aligned with your goals.</h1>
+    <p class="lead">A transparent educational planning experience for Indian retail investors. Explore risk, time horizon, diversification and illustrative portfolio outcomes.</p>
+    <div class="actions"><button class="btn btn-primary" onclick="startPlanning()">Start Planning →</button><button class="btn btn-secondary" onclick="goTo(6)">Explore allocation</button></div>
+  </div>
+  <div class="hero-card">
+    <div class="hero-stat"><span>Risk profiles</span><strong>5 levels</strong></div>
+    <div class="hero-stat"><span>Asset classes</span><strong>8 core</strong></div>
+    <div class="hero-stat"><span>Planning horizon</span><strong>1–30 years</strong></div>
+    <div class="hero-stat"><span>Method</span><strong>Rule-based & explainable</strong></div>
+  </div>
+</div>
+</section>
+
+<main class="container">
+<div class="progress-wrap">
+  <div class="progress-top"><span id="progressLabel">Step 1 of 11</span><span id="progressPct">9%</span></div>
+  <div class="progress"><div id="progressBar"></div></div>
+</div>
+
+<!-- 0 -->
+<section class="step active" id="step0">
+ <div class="section-head"><div class="eyebrow">01 · Financial profile</div><h2>Tell us about your financial starting point</h2><p>Use approximate values if you prefer. This tool keeps information in your browser.</p></div>
+ <div class="card grid grid-2">
+  <div class="field"><label for="age">Age</label><input id="age" type="number" min="18" max="100" value="32"></div>
+  <div class="field"><label for="income">Monthly income (₹)</label><input id="income" type="number" min="0" step="1000" value="100000"></div>
+  <div class="field"><label for="expenses">Monthly expenses (₹)</label><input id="expenses" type="number" min="0" step="1000" value="50000"></div>
+  <div class="field"><label for="existing">Existing investments (₹)</label><input id="existing" type="number" min="0" step="1000" value="500000"></div>
+  <div class="field"><label for="liabilities">Existing liabilities (₹)</label><input id="liabilities" type="number" min="0" step="1000" value="0"></div>
+  <div class="field"><label for="initial">Amount available to invest now (₹)</label><input id="initial" type="number" min="0" step="1000" value="250000"></div>
+  <div class="field"><label for="sip">Monthly investment / SIP (₹)</label><input id="sip" type="number" min="0" step="500" value="20000"></div>
+  <div class="field"><label>Emergency fund status</label>
+    <div class="choice-grid">
+      <button class="choice selected" data-group="emergency" data-value="adequate"><strong>Adequate</strong><span>~6+ months of expenses</span></button>
+      <button class="choice" data-group="emergency" data-value="partial"><strong>Partial</strong><span>Some reserve exists</span></button>
+      <button class="choice" data-group="emergency" data-value="low"><strong>Low / none</strong><span>Needs attention</span></button>
+    </div>
+  </div>
+ </div>
+ <div class="nav-actions"><span></span><button class="btn btn-primary" onclick="next()">Continue →</button></div>
+</section>
+
+<!-- 1 -->
+<section class="step" id="step1">
+ <div class="section-head"><div class="eyebrow">02 · Investment goal</div><h2>What are you planning for?</h2><p>Your goal can influence the liquidity and growth characteristics of a portfolio.</p></div>
+ <div class="card">
+  <div class="choice-grid" id="goalChoices">
+   <button class="choice selected" data-goal="wealth"><strong>Wealth creation</strong><span>Long-term capital growth</span></button>
+   <button class="choice" data-goal="retirement"><strong>Retirement</strong><span>Long-term financial independence</span></button>
+   <button class="choice" data-goal="education"><strong>Children's education</strong><span>Planned future expense</span></button>
+   <button class="choice" data-goal="house"><strong>House purchase</strong><span>Major medium/long-term goal</span></button>
+   <button class="choice" data-goal="marriage"><strong>Marriage</strong><span>Planned future expense</span></button>
+   <button class="choice" data-goal="emergency"><strong>Emergency corpus</strong><span>Liquidity and capital stability</span></button>
+   <button class="choice" data-goal="short"><strong>Short-term savings</strong><span>Near-term requirement</span></button>
+   <button class="choice" data-goal="other"><strong>Other goal</strong><span>Custom planning objective</span></button>
+  </div>
+  <div class="grid grid-2" style="margin-top:20px">
+   <div class="field"><label for="goalAmount">Target amount (₹)</label><input id="goalAmount" type="number" min="0" step="10000" value="5000000"></div>
+   <div class="field"><label for="goalCurrent">Current amount available for this goal (₹)</label><input id="goalCurrent" type="number" min="0" step="10000" value="500000"></div>
+  </div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Continue →</button></div>
+</section>
+
+<!-- 2 -->
+<section class="step" id="step2">
+ <div class="section-head"><div class="eyebrow">03 · Investment horizon</div><h2>How long can this money remain invested?</h2><p>Longer horizons may provide more time to absorb short-term fluctuations, but do not remove investment risk.</p></div>
+ <div class="card">
+   <label for="horizon">Investment horizon: <strong id="horizonVal">10 years</strong></label>
+   <input id="horizon" type="range" min="1" max="30" value="10" oninput="updateHorizon(this.value)">
+   <div style="display:flex;justify-content:space-between" class="small"><span>1 year</span><span>15 years</span><span>30 years</span></div>
+   <div class="pill-tabs" id="horizonPresets">
+    <button data-years="3">3 years</button><button data-years="5">5 years</button><button data-years="10" class="active">10 years</button><button data-years="15">15 years</button><button data-years="20">20 years</button>
+   </div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Continue →</button></div>
+</section>
+
+<!-- 3 -->
+<section class="step" id="step3">
+ <div class="section-head"><div class="eyebrow">04 · Risk assessment</div><h2>How would you react to investment uncertainty?</h2><p>Answer based on your likely behaviour, not on what you think markets will do.</p></div>
+ <div class="card" id="riskQuestions"></div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="calculateProfile();next()">Calculate profile →</button></div>
+</section>
+
+<!-- 4 -->
+<section class="step" id="step4">
+ <div class="section-head"><div class="eyebrow">05 · Investor profile</div><h2>Your planning profile</h2><p>The result is generated from the questionnaire using a transparent scoring model.</p></div>
+ <div class="dashboard">
+   <div class="card">
+     <span class="badge">Risk profile</span><div style="margin:12px 0"><div class="kpi" id="profileName">Moderate</div><div class="small">Score <span id="profileScore">0</span>/100</div></div>
+     <div class="risk-meter"><i class="risk-pin" id="riskPin"></i></div>
+     <div class="grid grid-3" style="margin-top:20px">
+       <div class="metric"><div class="kpi" id="summaryHorizon">10y</div><div class="kpi-label">Horizon</div></div>
+       <div class="metric"><div class="kpi" id="summaryGoal">Wealth</div><div class="kpi-label">Primary goal</div></div>
+       <div class="metric"><div class="kpi" id="summaryLiquidity">Medium</div><div class="kpi-label">Liquidity need</div></div>
+     </div>
+   </div>
+   <div class="card"><h3>Why this profile?</h3><div id="factors"></div></div>
+ </div>
+ <div class="notice" style="margin-top:18px">The profile is an educational planning indicator. It is not a suitability assessment or investment recommendation.</div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Review answers</button><button class="btn btn-primary" onclick="next()">View allocation →</button></div>
+</section>
+
+<!-- 5 -->
+<section class="step" id="step5">
+ <div class="section-head"><div class="eyebrow">06 · Suggested asset allocation</div><h2>Allocation built from your inputs</h2><p>Illustrative allocation generated by the rules engine. It changes with risk, horizon, goal and liquidity needs.</p></div>
+ <div class="dashboard">
+  <div class="card"><div class="chart-box"><canvas id="allocationChart"></canvas></div></div>
+  <div class="card"><h3>Target allocation</h3><div class="alloc-list" id="allocList"></div><div class="small" style="margin-top:13px">Total allocation: <strong id="allocTotal">100%</strong></div></div>
+ </div>
+ <div class="card" style="margin-top:18px"><h3>Why this allocation?</h3><div id="whyAllocation" class="grid grid-2"></div></div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">View projection →</button></div>
+</section>
+
+<!-- 6 -->
+<section class="step" id="step6">
+ <div class="section-head"><div class="eyebrow">07 · Portfolio projection</div><h2>Explore illustrative future values</h2><p>Projection assumes monthly contributions and annual compounding. Actual returns can differ materially.</p></div>
+ <div class="card grid grid-3">
+  <div class="field"><label for="projInitial">Initial investment (₹)</label><input id="projInitial" type="number" value="250000" min="0" oninput="syncProjection()"></div>
+  <div class="field"><label for="projSip">Monthly investment (₹)</label><input id="projSip" type="number" value="20000" min="0" oninput="syncProjection()"></div>
+  <div class="field"><label for="projReturn">Base annual return assumption</label><input id="projReturn" type="range" min="2" max="14" step=".5" value="8" oninput="renderProjection()"><div class="input-help"><strong id="returnVal">8%</strong> illustrative assumption</div></div>
+ </div>
+ <div class="dashboard" style="margin-top:18px">
+  <div class="card"><div class="chart-box"><canvas id="projectionChart"></canvas></div></div>
+  <div class="card">
+   <div class="metric-grid">
+    <div class="metric"><div class="kpi" id="projInvested">₹0</div><div class="kpi-label">Total invested</div></div>
+    <div class="metric"><div class="kpi" id="projBase">₹0</div><div class="kpi-label">Base scenario</div></div>
+    <div class="metric"><div class="kpi" id="projGain">₹0</div><div class="kpi-label">Illustrative gain</div></div>
+    <div class="metric"><div class="kpi" id="projRange">₹0–0</div><div class="kpi-label">Lower–higher range</div></div>
+   </div>
+   <div class="notice" style="margin-top:16px">Illustrative assumptions — not forecasts or guarantees. The tool does not use live market data.</div>
+  </div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Portfolio simulator →</button></div>
+</section>
+
+<!-- 7 -->
+<section class="step" id="step7">
+ <div class="section-head"><div class="eyebrow">08 · Portfolio simulator</div><h2>Test different allocations</h2><p>Adjust the core asset classes. The remaining allocation is automatically assigned to Cash/Liquid instruments so the total stays at 100%.</p></div>
+ <div class="dashboard">
+  <div class="card sim-controls" id="simControls"></div>
+  <div class="card">
+    <div class="chart-box"><canvas id="simChart"></canvas></div>
+    <div class="metric-grid" style="margin-top:15px">
+      <div class="metric"><div class="kpi" id="simRisk">Moderate</div><div class="kpi-label">Indicative risk</div></div>
+      <div class="metric"><div class="kpi" id="simReturn">7.0%</div><div class="kpi-label">Illustrative return</div></div>
+      <div class="metric"><div class="kpi" id="simDivers">Good</div><div class="kpi-label">Diversification</div></div>
+      <div class="metric"><div class="kpi" id="simCash">5%</div><div class="kpi-label">Cash / liquid</div></div>
+    </div>
+    <div id="simWarning" class="notice warning" style="margin-top:15px">Concentration and liquidity observations appear here.</div>
+  </div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Investment insights →</button></div>
+</section>
+
+<!-- 8 -->
+<section class="step" id="step8">
+ <div class="section-head"><div class="eyebrow">09 · Investment insights</div><h2>Understand how the portfolio may behave</h2></div>
+ <div class="card">
+  <h3>How your allocation changes</h3>
+  <p class="small">Compare the rules engine across different horizons using your current risk profile.</p>
+  <div class="chart-box"><canvas id="comparisonChart"></canvas></div>
+ </div>
+ <div class="grid grid-2" style="margin-top:18px">
+  <div class="card"><h3>Risk vs return</h3><div class="chart-box"><canvas id="riskReturnChart"></canvas></div></div>
+  <div class="card"><h3>Market scenario simulator</h3><p class="small">Hypothetical impacts only; not predictions.</p><div class="scenario-grid" id="scenarios"></div></div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Review plan →</button></div>
+</section>
+
+<!-- 9 -->
+<section class="step" id="step9">
+ <div class="section-head"><div class="eyebrow">10 · Goal planning & portfolio health</div><h2>Check your plan against the goal</h2></div>
+ <div class="dashboard">
+  <div class="card">
+   <h3>Goal progress</h3>
+   <div style="margin:18px 0"><div class="progress"><div id="goalProgress" style="width:0"></div></div></div>
+   <div class="metric-grid">
+    <div class="metric"><div class="kpi" id="goalRequired">₹0</div><div class="kpi-label">Required monthly</div></div>
+    <div class="metric"><div class="kpi" id="goalCurrentSip">₹0</div><div class="kpi-label">Current monthly</div></div>
+    <div class="metric"><div class="kpi" id="goalGap">₹0</div><div class="kpi-label">Potential gap</div></div>
+    <div class="metric"><div class="kpi" id="goalStatus">—</div><div class="kpi-label">Planning status</div></div>
+   </div>
+  </div>
+  <div class="card">
+   <h3>Portfolio health check</h3>
+   <div class="health" style="margin:15px 0">
+    <div class="health-ring" id="healthRing" style="--score:70%"><b id="healthScore">70</b></div>
+    <div><strong id="healthLabel">Planning hygiene</strong><p class="small" id="healthText">A simple educational checklist based on the information provided.</p></div>
+   </div>
+   <div id="healthItems"></div>
+  </div>
+ </div>
+ <div class="card" style="margin-top:18px">
+  <h3>Investment product explorer</h3>
+  <div class="pill-tabs" id="assetTabs"></div>
+  <div id="assetExplorer"></div>
+ </div>
+ <div class="nav-actions"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-primary" onclick="next()">Review your plan →</button></div>
+</section>
+
+<!-- 10 -->
+<section class="step" id="step10">
+ <div class="section-head"><div class="eyebrow">11 · Review your plan</div><h2>Your investment planning snapshot</h2><p>Review the assumptions before using this as an educational planning reference.</p></div>
+ <div class="card" id="reviewCard"></div>
+ <div class="actions"><button class="btn btn-primary" onclick="window.print()">Download / Print Plan</button><button class="btn btn-secondary" onclick="savePlan()">Save in browser</button><button class="btn btn-danger" onclick="startOver()">Start Over</button></div>
+ <div class="disclaimer"><strong>Important disclosure:</strong> This tool is intended for educational and illustrative planning purposes only. The suggested allocation is generated using predefined assumptions and does not constitute investment advice, a recommendation, solicitation, or guarantee of returns. Actual investment outcomes may differ. Investors should consider their individual circumstances and applicable product disclosures before investing. Market-linked investments can lose value. Derivatives and options can involve substantial losses and may not be appropriate for all investors. This tool does not claim to provide SEBI-registered investment advice.</div>
+</section>
+
+<div class="footer">
+ <strong>InvestPlan</strong> · Goal-based investment planning · Illustrative assumptions only.
+</div>
+</main>
+
+<script>
+/* ============================================================
+   InvestPlan — single-file educational investment planner
+   Allocation engine:
+   1) Start with a profile-based risk budget.
+   2) Modify equity/growth exposure for horizon and goal.
+   3) Increase liquid/stable assets for short horizons and liquidity needs.
+   4) Reserve diversification buckets for debt, gold and REIT/InvIT.
+   5) Normalize to exactly 100%.
+   All assumptions are illustrative and intentionally editable.
+============================================================ */
+
+const ASSUMPTIONS = {
+  assets:{
+    Equity:{ret:11,risk:5,liq:5,desc:"Listed equity can provide long-term growth but can experience substantial price volatility.",purpose:"Long-term growth",horizon:"7+ years",risk:"High",liquidity:"High",key:"Market volatility, valuation and company/business risks."},
+    "Equity Mutual Funds":{ret:10,risk:4,liq:4,desc:"Professionally managed pooled equity exposure with diversification across securities.",purpose:"Long-term growth",horizon:"5+ years",risk:"Moderately high",liquidity:"High",key:"Market risk, fund selection and tracking/management risks."},
+    "Debt Mutual Funds":{ret:7,risk:2,liq:4,desc:"Funds investing mainly in fixed-income instruments; returns and NAV can vary.",purpose:"Stability and income",horizon:"2+ years",risk:"Low–moderate",liquidity:"High",key:"Interest-rate, credit and liquidity risks."},
+    "Fixed Deposits":{ret:6.5,risk:1,liq:3,desc:"Bank deposits designed for predictable interest under stated terms, subject to applicable conditions.",purpose:"Stability / capital preservation",horizon:"Short–medium",risk:"Relatively lower",liquidity:"Moderate",key:"Inflation, reinvestment and premature-withdrawal considerations."},
+    "Government Securities / Bonds":{ret:7,risk:2,liq:3,desc:"Sovereign or high-quality fixed-income instruments with defined terms.",purpose:"Stability and diversification",horizon:"2+ years",risk:"Low–moderate",liquidity:"Moderate",key:"Interest-rate and market-price risk when sold before maturity."},
+    Gold:{ret:7.5,risk:3,liq:4,desc:"A diversifier whose price can behave differently from financial assets over some periods.",purpose:"Diversification / hedge",horizon:"5+ years",risk:"Moderate",liquidity:"High",key:"Price volatility and no assured income."},
+    "REITs / InvITs":{ret:8.5,risk:4,liq:4,desc:"Listed vehicles providing exposure to income-producing real assets or infrastructure.",purpose:"Diversification / income",horizon:"5+ years",risk:"Moderately high",liquidity:"High",key:"Market, interest-rate, occupancy/asset and regulatory risks."},
+    "Cash / Liquid":{ret:5,risk:0.5,liq:5,desc:"Highly liquid instruments for near-term needs and portfolio flexibility.",purpose:"Liquidity / stability",horizon:"0–2 years",risk:"Low",liquidity:"Very high",key:"Inflation and reinvestment risk."}
+  },
+  profiles:[
+    {name:"Conservative",max:30},
+    {name:"Moderately Conservative",max:45},
+    {name:"Moderate",max:60},
+    {name:"Moderately Aggressive",max:80},
+    {name:"Aggressive",max:100}
+  ]
+};
+
+let state={
+ step:0, age:32,income:100000,expenses:50000,existing:500000,liabilities:0,initial:250000,sip:20000,
+ emergency:"adequate",goal:"wealth",goalAmount:5000000,goalCurrent:500000,horizon:10,
+ riskAnswers:[3,3,3,3,3,3,3,3],riskScore:60,profile:"Moderate",allocation:{},sim:{},
+};
+
+let charts={};
+
+const riskQs=[
+ ["Loss tolerance","If your portfolio fell temporarily by about 20%, what would you most likely do?",["Sell most investments","Reduce some exposure","Hold and wait","Continue as planned","Consider adding gradually"]],
+ ["Volatility reaction","How comfortable are you with large short-term fluctuations?",["Not comfortable","Slightly comfortable","Neutral","Comfortable","Very comfortable"]],
+ ["Experience","How would you describe your investment experience?",["Very limited","Some experience","Moderate","Experienced","Very experienced"]],
+ ["Horizon confidence","How confident are you that you can leave this investment untouched for the planned horizon?",["Very low","Low","Moderate","High","Very high"]],
+ ["Income stability","How stable is your primary income source?",["Uncertain","Somewhat uncertain","Moderately stable","Stable","Very stable"]],
+ ["Liquidity need","How likely are you to need a significant portion of this money unexpectedly?",["Very likely","Likely","Possible","Unlikely","Very unlikely"]],
+ ["Obligations","How significant are your current financial obligations relative to income?",["Very high","High","Moderate","Low","Very low"]],
+ ["Capital preference","Which statement is closest to your preference?",["Protect capital first","Mostly protect capital","Balance protection and growth","Prefer growth with some stability","Prioritise long-term growth"]]
+];
+
+const fmt=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Math.max(0,n||0));
+const pct=n=>(Math.round(n*10)/10).toFixed(n%1?1:0)+"%";
+
+function startPlanning(){goTo(0)}
+function goTo(n){
+  if(n>state.step){ syncState(); if(n>=4) calculateProfile(); }
+  state.step=Math.max(0,Math.min(10,n));
+  document.querySelectorAll(".step").forEach((s,i)=>s.classList.toggle("active",i===state.step));
+  const p=((state.step+1)/11)*100;
+  document.getElementById("progressBar").style.width=p+"%";
+  document.getElementById("progressPct").textContent=Math.round(p)+"%";
+  document.getElementById("progressLabel").textContent=`Step ${state.step+1} of 11`;
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(state.step===5) renderAllocation();
+  if(state.step===6) renderProjection();
+  if(state.step===7) renderSimulator();
+  if(state.step===8) renderInsights();
+  if(state.step===9) renderGoalHealth();
+  if(state.step===10) renderReview();
+}
+function next(){
+  syncState();
+  if(state.step===0 && (!state.age || state.age<18)){
+    alert("Please enter a valid age of 18 or above."); return;
+  }
+  if(state.step===3) calculateProfile();
+  if(state.step===4) calculateAllocation();
+  goTo(state.step+1);
+}
+function prev(){goTo(state.step-1)}
+function syncState(){
+ ["age","income","expenses","existing","liabilities","initial","sip","goalAmount","goalCurrent","horizon"].forEach(id=>{const e=document.getElementById(id);if(e)state[id]=+e.value||0});
+ state.emergency=document.querySelector('[data-group="emergency"].selected')?.dataset.value||"adequate";
+ state.riskAnswers=[...document.querySelectorAll(".risk-select")].map(x=>+x.value);
+}
+function updateHorizon(v){
+ state.horizon=+v; document.getElementById("horizonVal").textContent=v+" years";
+ document.querySelectorAll("#horizonPresets button").forEach(b=>b.classList.toggle("active",+b.dataset.years===+v));
+}
+document.querySelectorAll('[data-group="emergency"]').forEach(b=>b.onclick=()=>selectButton(b,"emergency"));
+document.querySelectorAll("#goalChoices .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#goalChoices .choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");state.goal=b.dataset.goal});
+document.querySelectorAll("#horizonPresets button").forEach(b=>b.onclick=()=>{document.getElementById("horizon").value=b.dataset.years;updateHorizon(b.dataset.years)});
+function selectButton(btn,group){document.querySelectorAll(`[data-group="${group}"]`).forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")}
+
+function buildRiskQuestions(){
+ const wrap=document.getElementById("riskQuestions");
+ wrap.innerHTML=riskQs.map((q,i)=>`<div class="field" style="margin-bottom:22px"><label>${i+1}. ${q[0]}</label><div class="small" style="margin-bottom:8px">${q[1]}</div><select class="risk-select">${q[2].map((x,j)=>`<option value="${j+1}">${j+1} — ${x}</option>`).join("")}</select></div>`).join("");
+ wrap.querySelectorAll("select").forEach((s,i)=>s.value=state.riskAnswers[i]||3);
+}
+function calculateProfile(){
+ syncState();
+ let base=state.riskAnswers.reduce((a,b)=>a+b,0);
+ let score=((base-8)/32)*100;
+ // Financial capacity modifiers are limited so questionnaire behaviour remains the dominant factor.
+ if(state.age<30)score+=3;
+ if(state.age>55)score-=4;
+ if(state.emergency==="low")score-=8;
+ if(state.income>0 && state.expenses/state.income>.8)score-=7;
+ if(state.liabilities>state.income*24)score-=5;
+ if(state.horizon>=15)score+=4;
+ if(state.horizon<=3)score-=6;
+ state.riskScore=Math.round(Math.max(0,Math.min(100,score)));
+ state.profile=ASSUMPTIONS.profiles.find(p=>state.riskScore<=p.max)?.name||"Aggressive";
+ renderProfile();
+}
+function renderProfile(){
+ document.getElementById("profileName").textContent=state.profile;
+ document.getElementById("profileScore").textContent=state.riskScore;
+ document.getElementById("riskPin").style.left=state.riskScore+"%";
+ document.getElementById("summaryHorizon").textContent=state.horizon+"y";
+ document.getElementById("summaryGoal").textContent=goalLabel(state.goal);
+ const liq=state.horizon<=3||state.goal==="emergency"?"High":state.horizon<=7?"Medium":"Lower";
+ document.getElementById("summaryLiquidity").textContent=liq;
+ const labels=["Questionnaire responses","Investment horizon","Emergency reserve","Cash-flow capacity","Age / obligations"];
+ const vals=[
+  `Behavioural score ${Math.round((state.riskScore+10)/1.1) > 100 ? "high" : "moderate"} within the assessment.`,
+  `${state.horizon} years ${state.horizon>=10?"provides a longer planning window":"calls for greater attention to liquidity"}.`,
+  state.emergency==="adequate"?"Emergency reserve supports investment capacity.":state.emergency==="partial"?"Partial reserve suggests keeping liquidity in view.":"Low reserve reduces financial capacity for volatility.",
+  state.income>0&&state.expenses/state.income<.6?"Expenses leave a relatively larger share of income available.":"Cash-flow commitments reduce flexibility.",
+  state.age>55?"Age is treated as a modest constraint on risk capacity.":"Age/obligations are used only as limited modifiers."
+ ];
+ document.getElementById("factors").innerHTML=labels.map((x,i)=>`<div class="factor"><div class="factor-line"><strong>${x}</strong><span class="badge">${i===0?state.riskScore:"Input"}</span></div><div class="small">${vals[i]}</div></div>`).join("");
+}
+function goalLabel(g){return {wealth:"Wealth creation",retirement:"Retirement",education:"Education",house:"House purchase",marriage:"Marriage",emergency:"Emergency corpus",short:"Short-term savings",other:"Other goal"}[g]||"Wealth creation"}
+
+function calculateAllocation(h=state.horizon){
+ const riskBase={Conservative:20,"Moderately Conservative":35,Moderate:50,"Moderately Aggressive":65,Aggressive:78}[state.profile];
+ let equity=riskBase;
+ if(h>=15) equity+=8; else if(h>=10)equity+=4; else if(h<=3)equity-=20; else if(h<=5)equity-=10;
+ if(["emergency","short"].includes(state.goal))equity-=18;
+ if(["retirement","wealth"].includes(state.goal)&&h>=10)equity+=3;
+ if(state.emergency==="low")equity-=8;
+ equity=Math.max(5,Math.min(82,equity));
+ let gold=8, reit=5, cash=h<=3?20:h<=5?12:7;
+ if(state.goal==="emergency"||state.goal==="short")cash+=8;
+ if(h>=15)gold=10;
+ let debt=Math.max(5,35-(equity-35)*.35-cash*.15);
+ let gov=Math.max(3,10-(equity-50)*.08);
+ let eqmf=Math.max(5,equity*.45);
+ let direct=Math.max(0,equity-eqmf);
+ // Combine direct equity and equity MF into the visible Equity bucket.
+ let weights={Equity:eqmf+direct,"Debt Mutual Funds":debt,"Fixed Deposits":10,"Government Securities / Bonds":gov,Gold:gold,"REITs / InvITs":reit,"Cash / Liquid":cash};
+ // Reduce fixed income if needed, then normalize.
+ let total=Object.values(weights).reduce((a,b)=>a+b,0);
+ if(total>100){weights["Fixed Deposits"]=Math.max(3,weights["Fixed Deposits"]-(total-100))}
+ total=Object.values(weights).reduce((a,b)=>a+b,0);
+ Object.keys(weights).forEach(k=>weights[k]=weights[k]/total*100);
+ return weights;
+}
+function calculateAllocation(){state.allocation=calculateAllocation(state.horizon)}
+function renderAllocation(){
+ calculateAllocation();
+ const a=state.allocation;
+ const labels=Object.keys(a), vals=labels.map(k=>a[k]);
+ if(charts.alloc)charts.alloc.destroy();
+ charts.alloc=new Chart(document.getElementById("allocationChart"),{type:"doughnut",data:{labels,datasets:[{data:vals,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:"66%",plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:c=>`${c.label}: ${pct(c.raw)}`}}}}});
+ document.getElementById("allocList").innerHTML=labels.map(k=>`<div class="alloc-row"><span><strong>${k}</strong></span><div class="bar"><i style="width:${a[k]}%"></i></div><b>${Math.round(a[k])}%</b></div>`).join("");
+ document.getElementById("allocTotal").textContent=Math.round(vals.reduce((x,y)=>x+y,0))+"%";
+ document.getElementById("whyAllocation").innerHTML=[
+  ["Time Horizon",`${state.horizon} years influences the balance between growth assets and stability/liquidity assets.`],
+  ["Risk Profile",`${state.profile} profile sets the starting risk budget before other factors are applied.`],
+  ["Goal",`${goalLabel(state.goal)} influences the need for liquidity versus long-term growth.`],
+  ["Diversification","The engine spreads exposure across growth, fixed-income, real assets and liquid instruments."]
+ ].map(x=>`<div class="metric"><strong>${x[0]}</strong><p class="small">${x[1]}</p></div>`).join("");
+}
+
+function futureValue(initial,sip,annual,years){
+ const r=annual/100/12,n=years*12;
+ return initial*Math.pow(1+r,n)+(r? sip*(Math.pow(1+r,n)-1)/r:sip*n);
+}
+function syncProjection(){
+  state.initial=+document.getElementById("projInitial").value||0;
+  state.sip=+document.getElementById("projSip").value||0;
+  renderProjection();
+}
+function renderProjection(){
+ const initial=+document.getElementById("projInitial").value||0,sip=+document.getElementById("projSip").value||0,ret=+document.getElementById("projReturn").value||8;
+ document.getElementById("returnVal").textContent=ret+"%";
+ const years=state.horizon||10;
+ const low=Math.max(1,ret-3),high=Math.min(16,ret+3);
+ const base=futureValue(initial,sip,ret,years),lo=futureValue(initial,sip,low,years),hi=futureValue(initial,sip,high,years);
+ const invested=initial+sip*12*years;
+ document.getElementById("projInvested").textContent=fmt(invested);
+ document.getElementById("projBase").textContent=fmt(base);
+ document.getElementById("projGain").textContent=fmt(base-invested);
+ document.getElementById("projRange").textContent=fmt(lo)+"–"+fmt(hi);
+ const labels=Array.from({length:years+1},(_,i)=>"Y"+i);
+ const series=r=>labels.map((_,i)=>futureValue(initial,sip,r,i));
+ if(charts.proj)charts.proj.destroy();
+ charts.proj=new Chart(document.getElementById("projectionChart"),{type:"line",data:{labels,datasets:[
+  {label:`Lower ${low}%`,data:series(low),tension:.3,borderWidth:2},
+  {label:`Base ${ret}%`,data:series(ret),tension:.3,borderWidth:3},
+  {label:`Higher ${high}%`,data:series(high),tension:.3,borderWidth:2}
+ ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{ticks:{callback:v=>"₹"+Math.round(v/100000)+"L"}}},plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}}}});
+}
+
+function renderSimulator(){
+ const keys=["Equity","Debt Mutual Funds","Gold","Fixed Deposits","Cash / Liquid"];
+ if(!Object.keys(state.sim).length){
+   const a=state.allocation; keys.forEach(k=>state.sim[k]=Math.round(a[k]||0));
+ }
+ const wrap=document.getElementById("simControls");
+ wrap.innerHTML=keys.map(k=>`<div class="slider-row"><strong>${k}</strong><input type="range" min="0" max="90" value="${state.sim[k]}" data-sim="${k}"><b id="sim_${safe(k)}">${state.sim[k]}%</b></div>`).join("");
+ wrap.querySelectorAll("input").forEach(x=>x.oninput=()=>updateSim(x));
+ updateSim();
+}
+function safe(k){return k.replace(/[^a-z0-9]/gi,"")}
+function updateSim(input){
+  if(input){
+    const key=input.dataset.sim;
+    state.sim[key]=Math.max(0,Math.min(90,+input.value||0));
+  }
+
+  const adjustable=Object.keys(state.sim).filter(k=>k!=="Cash / Liquid");
+  let fixed=adjustable.reduce((sum,k)=>sum+(+state.sim[k]||0),0);
+
+  if(fixed>100 && input && input.dataset.sim!=="Cash / Liquid"){
+    const excess=fixed-100;
+    state.sim[input.dataset.sim]=Math.max(0,state.sim[input.dataset.sim]-excess);
+    input.value=state.sim[input.dataset.sim];
+    fixed=adjustable.reduce((sum,k)=>sum+(+state.sim[k]||0),0);
+  }
+
+  state.sim["Cash / Liquid"]=Math.max(0,100-fixed);
+
+  Object.keys(state.sim).forEach(k=>{
+    const label=document.getElementById("sim_"+safe(k));
+    if(label) label.textContent=Math.round(state.sim[k])+"%";
+    const slider=document.querySelector(`[data-sim="${CSS.escape(k)}"]`);
+    if(slider && k!=="Cash / Liquid") slider.value=state.sim[k];
+  });
+
+  const keys=Object.keys(state.sim);
+  const vals=keys.map(k=>state.sim[k]);
+  const risk=keys.reduce((sum,k)=>sum+(state.sim[k]/100)*ASSUMPTIONS.assets[k].risk,0);
+  const ret=keys.reduce((sum,k)=>sum+(state.sim[k]/100)*ASSUMPTIONS.assets[k].ret,0);
+  const meaningful=keys.filter(k=>state.sim[k]>=5).length;
+  const divers=meaningful>=4?"Good":meaningful===3?"Moderate":"Limited";
+
+  document.getElementById("simRisk").textContent =
+    risk<1.8?"Low":risk<3?"Moderate":risk<3.8?"Elevated":"High";
+  document.getElementById("simReturn").textContent=ret.toFixed(1)+"%";
+  document.getElementById("simDivers").textContent=divers;
+  document.getElementById("simCash").textContent=Math.round(state.sim["Cash / Liquid"])+"%";
+
+  const concentration=Math.max(...vals);
+  let warning;
+  if(concentration>65){
+    warning="A single asset class exceeds 65% in this simulation; review concentration.";
+  }else if(state.sim["Cash / Liquid"]<5){
+    warning="Liquid allocation is below 5%; consider how near-term needs would be funded.";
+  }else{
+    warning="No major concentration warning under this simple educational check.";
+  }
+  document.getElementById("simWarning").textContent=warning;
+
+  if(charts.sim)charts.sim.destroy();
+  charts.sim=new Chart(document.getElementById("simChart"),{
+    type:"doughnut",
+    data:{labels,datasets:[{data:vals,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom"}}}
+  });
+}
+
+function renderInsights(){
+ const hs=[5,10,20], datasets=hs.map(h=>({label:h+" years",data:["Equity","Debt Mutual Funds","Gold","Fixed Deposits","Cash / Liquid"].map(k=>Math.round((calculateAllocation(h)[k]||0))),borderWidth:2}));
+ if(charts.compare)charts.compare.destroy();
+ charts.compare=new Chart(document.getElementById("comparisonChart"),{type:"bar",data:{labels:["Equity","Debt","Gold","FD","Cash"],datasets},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100,ticks:{callback:v=>v+"%"}}}}});
+ const ar=Object.entries(ASSUMPTIONS.assets).map(([k,v])=>({x:v.risk,y:v.ret,label:k}));
+ if(charts.risk)charts.risk.destroy();
+ charts.risk=new Chart(document.getElementById("riskReturnChart"),{type:"scatter",data:{datasets:[{label:"Illustrative asset characteristics",data:ar,pointRadius:7}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:"Indicative risk level"},min:0,max:6},y:{title:{display:true,text:"Illustrative return assumption"},min:4,max:13}}}});
+ const a=state.allocation;
+ const equityImpact=(a.Equity||0)*-.20;
+ document.getElementById("scenarios").innerHTML=[
+  ["Equity -20%",equityImpact/100],
+  ["Rates +1%",-(a["Debt Mutual Funds"]||0)*.02/100],
+  ["Gold +10%",(a.Gold||0)*.10/100],
+  ["Higher volatility",-(a.Equity||0)*.06/100]
+ ].map(x=>`<div class="scenario"><div class="small">${x[0]}</div><div class="impact">${(x[1]*100).toFixed(1)}%</div><div class="small">Illustrative portfolio impact</div></div>`).join("");
+}
+
+function renderGoalHealth(){
+ const goal=state.goalAmount||0,current=state.goalCurrent||0,years=state.horizon||10,ret=+document.getElementById("projReturn").value||8;
+ const required=goal>current?requiredSip(goal-current,ret,years):0;
+ const gap=required-state.sip;
+ const progress=goal?Math.min(100,current/goal*100):0;
+ document.getElementById("goalProgress").style.width=progress+"%";
+ document.getElementById("goalRequired").textContent=fmt(required);
+ document.getElementById("goalCurrentSip").textContent=fmt(state.sip);
+ document.getElementById("goalGap").textContent=fmt(Math.abs(gap));
+ document.getElementById("goalStatus").textContent=gap>0?"Potential shortfall":"Potentially on track";
+ const items=[
+  ["Emergency fund",state.emergency==="adequate","Review if reserve is sufficient for your circumstances."],
+  ["Diversification",Object.keys(state.allocation).filter(k=>state.allocation[k]>=5).length>=4,"Multiple asset classes are represented."],
+  ["Horizon",years>=5,"A longer horizon can provide more time for market fluctuations to play out."],
+  ["Liquidity",years<=3||["short","emergency"].includes(state.goal),"Near-term goals merit close attention to liquidity."]
+ ];
+ const score=Math.round(items.filter(x=>x[1]).length/items.length*100);
+ document.getElementById("healthScore").textContent=score;
+ document.getElementById("healthRing").style.setProperty("--score",score+"%");
+ document.getElementById("healthLabel").textContent=score>=75?"Planning checklist looks broadly complete":"Some planning items need attention";
+ document.getElementById("healthText").textContent="This is a checklist, not a financial-health or suitability rating.";
+ document.getElementById("healthItems").innerHTML=items.map(x=>`<div class="factor"><strong>${x[1]?"✓":"△"} ${x[0]}</strong><div class="small">${x[2]}</div></div>`).join("");
+ const assets=Object.keys(ASSUMPTIONS.assets);
+ document.getElementById("assetTabs").innerHTML=assets.map((k,i)=>`<button class="${i===0?"active":""}" onclick="showAsset('${k.replace(/'/g,"\\'")}',this)">${k}</button>`).join("");
+ showAsset(assets[0],document.querySelector("#assetTabs button"));
+}
+function requiredSip(target,annual,years){
+ const r=annual/100/12,n=years*12;
+ if(n<=0)return 0;
+ return r?target*r/(Math.pow(1+r,n)-1):target/n;
+}
+function showAsset(k,btn){
+ document.querySelectorAll("#assetTabs button").forEach(x=>x.classList.remove("active"));btn?.classList.add("active");
+ const a=ASSUMPTIONS.assets[k];
+ document.getElementById("assetExplorer").innerHTML=`<div class="grid grid-3"><div class="asset-card"><strong>What it is</strong><p>${a.desc}</p></div><div class="asset-card"><strong>Typical purpose</strong><p>${a.purpose}</p></div><div class="asset-card"><strong>Risk / liquidity</strong><p>${a.risk} · ${a.liquidity}</p></div><div class="asset-card"><strong>Suitable horizon</strong><p>${a.horizon}</p></div><div class="asset-card"><strong>Key risks</strong><p>${a.key}</p></div><div class="asset-card"><strong>Illustrative return</strong><p>${a.ret}% p.a. assumption — not a forecast.</p></div></div>`;
+}
+function renderReview(){
+ calculateAllocation();
+ const a=state.allocation;
+ document.getElementById("reviewCard").innerHTML=`
+ <div class="metric-grid">
+  <div class="metric"><div class="kpi">${state.profile}</div><div class="kpi-label">Risk profile</div></div>
+  <div class="metric"><div class="kpi">${state.horizon}y</div><div class="kpi-label">Investment horizon</div></div>
+  <div class="metric"><div class="kpi">${goalLabel(state.goal)}</div><div class="kpi-label">Primary goal</div></div>
+  <div class="metric"><div class="kpi">${fmt(state.sip)}</div><div class="kpi-label">Monthly investment</div></div>
+ </div>
+ <h3 style="margin-top:24px">Target allocation</h3>
+ <table class="table"><thead><tr><th>Asset class</th><th>Allocation</th><th>Role</th></tr></thead><tbody>
+ ${Object.entries(a).map(([k,v])=>`<tr><td>${k}</td><td><strong>${Math.round(v)}%</strong></td><td>${ASSUMPTIONS.assets[k].purpose}</td></tr>`).join("")}
+ </tbody></table>
+ <div class="notice" style="margin-top:18px"><strong>Why this allocation?</strong> It reflects your ${state.horizon}-year horizon, ${state.profile} risk profile, ${goalLabel(state.goal).toLowerCase()} goal, liquidity considerations and diversification rules.</div>`;
+}
+function savePlan(){
+ const payload={...state,savedAt:new Date().toISOString()};
+ localStorage.setItem("investplan_state",JSON.stringify(payload));
+ alert("Your plan has been saved locally in this browser.");
+}
+function startOver(){
+ if(confirm("Start over and clear the saved plan?")){
+   localStorage.removeItem("investplan_state"); location.reload();
+ }
+}
+function loadSaved(){
+ try{
+  const s=JSON.parse(localStorage.getItem("investplan_state"));
+  if(!s)return;
+  state={...state,...s};
+  ["age","income","expenses","existing","liabilities","initial","sip","goalAmount","goalCurrent","horizon"].forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=state[id]});
+  updateHorizon(state.horizon);
+  document.querySelectorAll('[data-group="emergency"]').forEach(b=>b.classList.toggle("selected",b.dataset.value===state.emergency));
+  document.querySelectorAll("#goalChoices .choice").forEach(b=>b.classList.toggle("selected",b.dataset.goal===state.goal));
+  buildRiskQuestions();
+ }catch(e){console.warn("Saved plan could not be loaded.");}
+}
+buildRiskQuestions(); loadSaved(); calculateProfile(); calculateAllocation();
+
+// Startup check: surface JavaScript errors instead of leaving navigation unresponsive.
+window.addEventListener("error", function(e){
+  console.error("InvestPlan error:", e.error || e.message);
+});
+
+</script>
+</body>
+</html>
